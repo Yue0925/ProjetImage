@@ -1,4 +1,4 @@
-## Projet Image
+## Projet Image Groupe 1
 
 Détection d’un escalier dans une image et estimation du nombre de marche
 
