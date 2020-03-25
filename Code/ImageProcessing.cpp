@@ -91,29 +91,14 @@ void filterDirectional(cv::Mat& Mag, cv::Mat& Phase) {
 	cv::Mat mask;
 	mask.create(Mag.cols, Mag.rows, CV_32F);
 	mask = 1;
-	/*
-	for (int i = 0; i < Mag.rows; i++)
-	{
-		for (int j = 0; j < Mag.cols; j++)
-		{
-			if (i <= Mag.rows / 2) {
-				if (j>=i && j<= Mag.rows-i)
-					mask.at<float>(i, j) = 0;
-			}
-			else if (i > Mag.rows / 2) {
-				if(j>= Mag.rows-i && j<= i)
-					mask.at<float>(i, j) = 0;
-			}
 
-		}
-	}
-	*/
 	cv::Point triangles[2][3];
-	triangles[0][0] = cv::Point(Mag.cols / 4, 0);
-	triangles[0][1] = cv::Point(Mag.cols * 3 / 4, 0);
+
+	triangles[0][0] = cv::Point(Mag.cols * 2.5 / 6, 0);
+	triangles[0][1] = cv::Point(Mag.cols * 3.5 / 6, 0);
 	triangles[0][2] = cv::Point(Mag.cols / 2, Mag.cols / 2);
-	triangles[1][0] = cv::Point(Mag.cols / 4, Mag.cols);
-	triangles[1][1] = cv::Point(Mag.cols * 3 / 4, Mag.cols);
+	triangles[1][0] = cv::Point(Mag.cols * 2.5 / 6, Mag.cols);
+	triangles[1][1] = cv::Point(Mag.cols * 3.5 / 6, Mag.cols);
 	triangles[1][2] = cv::Point(Mag.cols / 2, Mag.cols / 2);
 
 	int npt[] = { 3 };
@@ -134,29 +119,33 @@ void tfOutput(cv::Mat& Mag, cv::Mat& Phase, cv::Mat& img, std::string path) {
 	LogMag = (Mag + 1);
 
 	log(LogMag, LogMag);
-
-	//imshow("Magnitude", LogMag);
+	/*
+	imshow("Magnitude", LogMag);
 	cv::waitKey();
 	cv::destroyWindow("Magnitude");
+	*/
 	imwrite(path + "/Magnitude.jpg", LogMag);
-
-	//imshow("Phase", Phase);
-	imwrite(path + "/Phase.jpg", Phase);
+	/*
+	imshow("Phase", Phase);
 	cv::waitKey();
 	cv::destroyWindow("Phase");
+	*/
+	imwrite(path + "/Phase.jpg", Phase);
 
 	// img - now in CV_32FC1 format,we need CV_8UC1 or scale it by factor 1.0/255.0  
 	img.convertTo(img, CV_8UC1);
-	//imshow("Filtering result", img);
-	imwrite(path + "/FilteringResult.jpg", img);
+	/*
+	imshow("Filtering result", img);
 	cv::waitKey();
 	cv::destroyWindow("Filtering result");
+	*/
+	imwrite(path + "/FilteringResult.jpg", img);
 }
 void lectureImage(cv::Mat& img, std::string path, std::string name, int& rows, int& cols) {
 	img = cv::imread(path + name, cv::IMREAD_COLOR);
 
-	cols = img.size().width;
-	rows = img.size().height;
+	cols = img.cols;
+	rows = img.rows;
 
 	std::cout << "original: rows: " << rows << ", cols: " << cols << std::endl;
 
@@ -165,29 +154,35 @@ void lectureImage(cv::Mat& img, std::string path, std::string name, int& rows, i
 
 	// apply a GaussianBlur to color image to reduce the noise
 	GaussianBlur(img, img, cv::Size(3, 3), 0, 0, cv::BORDER_DEFAULT);
-	//imshow("color img", img);
+	/*
+	imshow("color img", img);
 	cv::waitKey();
 	cv::destroyWindow("color img");
+	*/
 }
 
 void greyscaleImage(cv::Mat& img, std::string path) {
 	//convert RGB image to greyscale image
 	cv::cvtColor(img, img, cv::COLOR_BGR2GRAY);
-
-	//imshow("grayscale", img);
-	imwrite(path + "/grayscale.jpg", img);
+	/*
+	imshow("grayscale", img);
 	cv::waitKey();
 	cv::destroyWindow("grayscale");
+	*/
+	imwrite(path + "/grayscale.jpg", img);
+
 }
 
 void equlization(cv::Mat& img, std::string path) {
 	//histogram equlization
 	cv::equalizeHist(img, img);
-
-	//imshow("equlization", img);
-	imwrite(path + "/equlization.jpg", img);
+	/*
+	imshow("equlization", img);
 	cv::waitKey();
 	cv::destroyWindow("equlization");
+	*/
+	imwrite(path + "/equlization.jpg", img);
+
 }
 
 void transformFourier(cv::Mat& img, std::string path) {
@@ -199,8 +194,6 @@ void transformFourier(cv::Mat& img, std::string path) {
 
 	highPassFilter(Mag, Phase);
 
-	//tfOutput1(Mag, Phase, equalizeMat);
-
 	filterDirectional(Mag, Phase);
 
 	// Inverse transform
@@ -210,15 +203,54 @@ void transformFourier(cv::Mat& img, std::string path) {
 	tfOutput(Mag, Phase, img, path);
 
 }
-void binarization(cv::Mat& img, std::string path, int rows, int cols) {
+void binarization(cv::Mat& img, std::string path, int first) {
 	//threshold(img, img, 25, 255, THRESH_BINARY_INV);
-
-	threshold(img, img, 0, 255, cv::THRESH_OTSU | cv::THRESH_BINARY_INV);
-
-	resize(img, img, cv::Size(cols, rows));
-
-	//imshow("binarization", img);
-	imwrite(path + "/binarization.jpg", img);
-	cv::waitKey();
-	cv::destroyWindow("binarization");
+		threshold(img, img, 0, 255, cv::THRESH_OTSU | cv::THRESH_BINARY_INV);
+		/*
+		imshow("binarization", img);
+		cv::waitKey();
+		cv::destroyWindow("binarization");
+		*/
+		imwrite(path + "/binarization.jpg", img);
+		
 }
+
+void filterMedian(cv::Mat& img, std::string path) {
+	for (int i = 0; i < 10; i++)
+	{
+		cv::medianBlur(img, img, 3);
+		threshold(img, img, 0, 255, cv::THRESH_OTSU);
+		/*
+		imshow("filterMedian", img);
+		cv::waitKey();
+		cv::destroyWindow("filterMedian");
+		*/
+		imwrite(path + "/filterMedian.jpg", img);
+
+	}
+
+}
+
+void erosion(cv::Mat& img, std::string path) {
+	int erosion_size = 1;
+	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1),
+		cv::Point(erosion_size, erosion_size));
+	cv::dilate(img, img, kernel);
+	/*
+	imshow("erosion", img);
+	cv::waitKey();
+	cv::destroyWindow("erosion");
+	*/
+	imwrite(path + "/erosion.jpg", img);
+
+}
+/*
+void filterGaussian(cv::Mat& img, std::string path) {
+	GaussianBlur(img, img, cv::Size(3, 3), 0);
+
+	imshow("GaussianBlur", img);
+	imwrite(path + "/GaussianBlur.jpg", img);
+	cv::waitKey();
+	cv::destroyWindow("GaussianBlur");
+}
+*/
