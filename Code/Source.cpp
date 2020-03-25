@@ -13,12 +13,10 @@
 
 int main()
 {
-	
+
 	// for escalier_1 to escalier_12
-	for (int i = 11; i < 13; i++)
+	for (int i = 1; i < 13; i++)
 	{
-		
-		
 		std::string path = "./images/escalier_" + std::to_string(i);
 		std::string name = "/escalier_" + std::to_string(i) + ".jpg";
 		cv::Mat img;
@@ -26,20 +24,24 @@ int main()
 		int rows = 0;
 		int cols = 0;
 
-
-		lectureImage(img, path, name,rows,cols);
-
+		lectureImage(img, path, name, rows, cols);
+		std::cout << "HERE i: "<<i << std::endl;
 		greyscaleImage(img, path);
 
 		equlization(img, path);
 
 		transformFourier(img, path);
 
-		binarization(img, path,rows,cols);
-    
-	
+		binarization(img, path, 0);
 
-		std::string pred = "./images/escalier_"+std::to_string(i)+"/binarization.jpg";
+		resize(img, img, cv::Size(cols, rows));
+
+		
+
+		erosion(img, path);
+		filterMedian(img, path);
+		
+		std::string pred = "./images/escalier_" + std::to_string(i) + "/filterMedian.jpg";
 
 		int nbmarche = nombreDeMarche(pred);
 
@@ -50,17 +52,17 @@ int main()
 		std::string verite = "./images/escalier_" + std::to_string(i) + "/verite.jpg";
 
 		cv::Mat ground_t = cv::imread(verite);
-	
+
 
 		std::vector<float> matrice = secondMethode(prediction, ground_t);
 
 		displayMatriceConf(matrice);
 
 		std::vector<float> resultats = displayScore(matrice);
-	
+
 		std::ofstream fichier("./images/escalier_" + std::to_string(i) + "/Resultat.txt", std::ios::out | std::ios::trunc);
-	
-		if (fichier)  
+
+		if (fichier)
 		{
 			fichier << "Resultat :" << std::endl;
 			fichier << "Le nombre de marche de l'escalier est de : " << nbmarche << std::endl;
@@ -71,22 +73,22 @@ int main()
 			fichier << " Vrai Negatif	=	" << matrice[2] << std::endl;
 			fichier << " Faux Negatif	=	" << matrice[3] << std::endl;
 			std::cout << std::endl;
-			fichier << "Précision - RAPPEL - FSCORE " << std::endl;
-			fichier << " Précision	=	" << resultats[0]<<"	( pourcentage "<< resultats[0]*100<<" )"<< std::endl;
-			fichier << " Rappel		=	" << resultats[1]<< "	( pourcentage " << resultats[1]*100<< " )" << std::endl;
-			fichier << " F-score	=	" << resultats[2]<<"	( pourcentage " << resultats[2]*100<< " )" << std::endl;
-	
-			fichier.close();  
+			fichier << "Pr¨¦cision - RAPPEL - FSCORE " << std::endl;
+			fichier << " Pr¨¦cision	=	" << resultats[0] << "	( pourcentage " << resultats[0] * 100 << " )" << std::endl;
+			fichier << " Rappel		=	" << resultats[1] << "	( pourcentage " << resultats[1] * 100 << " )" << std::endl;
+			fichier << " F-score	=	" << resultats[2] << "	( pourcentage " << resultats[2] * 100 << " )" << std::endl;
+
+			fichier.close();
 		}
 		else {
-			std::cerr << "Erreur à l'ouverture !" << std::endl;
+			std::cerr << "Erreur ¨¤ l'ouverture !" << std::endl;
 		}
 
 
 	}
-    
 
-    cv::waitKey();
-    return 0;
+
+	cv::waitKey();
+	return 0;
 }
 
