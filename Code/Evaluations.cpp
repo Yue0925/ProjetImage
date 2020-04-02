@@ -51,15 +51,19 @@ void displayMatriceConf(std::vector<float> matriceConfusion) {
 }
 std::vector<float> displayScore(std::vector<float> matriceConfusion) {
     
-    float prec = float(matriceConfusion[0] / (matriceConfusion[0] + matriceConfusion[3]));
-    float rap = float(matriceConfusion[0] / (matriceConfusion[0] + matriceConfusion[1]));
-    std::cout << "Precision = " << prec << std::endl;
-    std::cout << "Rappel = " << rap << std::endl;
-    float f_score =float( 2 * ((prec * rap) / (prec + rap)));
+    float total = matriceConfusion[0] + matriceConfusion[1] + matriceConfusion[2] + matriceConfusion[3];
+    float sensibilite = float(matriceConfusion[0] / (matriceConfusion[0] + matriceConfusion[3]));
+    float specificite = float(matriceConfusion[0] / (matriceConfusion[0] + matriceConfusion[1]));
+    float accuracy = float((matriceConfusion[0] + matriceConfusion[2]) / total);
+    std::cout << "Sensibilite (Recall) = " << sensibilite << std::endl;
+    std::cout << "Specificite (Precision) = " << specificite << std::endl;
+    std::cout << "Accuracy = " << accuracy << std::endl;
+    float f_score =float( 2 * ((sensibilite * specificite) / (sensibilite + specificite)));
     std::cout << "F score = " << f_score << std::endl;
     std::vector<float> res;
-    res.push_back(prec);
-    res.push_back(rap);
+    res.push_back(sensibilite);
+    res.push_back(specificite);
     res.push_back(f_score);
+    res.push_back(accuracy);
     return res;
 }

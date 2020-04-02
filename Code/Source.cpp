@@ -13,10 +13,11 @@
 
 int main()
 {
-
+	
 	// for escalier_1 to escalier_12
 	for (int i = 1; i < 13; i++)
 	{
+		
 		std::string path = "./images/escalier_" + std::to_string(i);
 		std::string name = "/escalier_" + std::to_string(i) + ".jpg";
 		cv::Mat img;
@@ -25,7 +26,7 @@ int main()
 		int cols = 0;
 
 		lectureImage(img, path, name, rows, cols);
-		std::cout << "HERE i: "<<i << std::endl;
+		std::cout << "HERE i: " << i << std::endl;
 		greyscaleImage(img, path);
 
 		equlization(img, path);
@@ -36,13 +37,21 @@ int main()
 
 		resize(img, img, cv::Size(cols, rows));
 
-		
 
-		erosion(img, path);
+
+		//REDUCTION DU BRUIT
+
+		//erosion(img, path);
 		filterMedian(img, path);
+		erosion(img, path);
+		skeleton(img, path);
 		
-		std::string pred = "./images/escalier_" + std::to_string(i) + "/filterMedian.jpg";
+		
+		
+		
+		std::string pred = "./images/escalier_" + std::to_string(i) + "/skelt_dilatation.jpg";
 
+		std::cout << "ok" << std::endl;
 		int nbmarche = nombreDeMarche(pred);
 
 		std::cout << "Le nombre de marche de l'escalier est de : " << nbmarche << std::endl;
@@ -73,15 +82,16 @@ int main()
 			fichier << " Vrai Negatif	=	" << matrice[2] << std::endl;
 			fichier << " Faux Negatif	=	" << matrice[3] << std::endl;
 			std::cout << std::endl;
-			fichier << "Pr¨¦cision - RAPPEL - FSCORE " << std::endl;
-			fichier << " Pr¨¦cision	=	" << resultats[0] << "	( pourcentage " << resultats[0] * 100 << " )" << std::endl;
-			fichier << " Rappel		=	" << resultats[1] << "	( pourcentage " << resultats[1] * 100 << " )" << std::endl;
+			fichier << "Sensibilite - Specificite - FSCORE " << std::endl;
+			fichier << " Sensibilite	=	" << resultats[0] << "	( pourcentage " << resultats[0] * 100 << " )" << std::endl;
+			fichier << " Specificite		=	" << resultats[1] << "	( pourcentage " << resultats[1] * 100 << " )" << std::endl;
+			fichier << " Accuracy	=	" << resultats[3] << "	( pourcentage " << resultats[3] * 100 << " )" << std::endl;
 			fichier << " F-score	=	" << resultats[2] << "	( pourcentage " << resultats[2] * 100 << " )" << std::endl;
 
 			fichier.close();
 		}
 		else {
-			std::cerr << "Erreur ¨¤ l'ouverture !" << std::endl;
+			std::cerr << "Erreur a l'ouverture !" << std::endl;
 		}
 
 
