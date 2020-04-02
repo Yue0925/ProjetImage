@@ -32,12 +32,6 @@ void equlization(cv::Mat& img, std::string path);
 
 void transformFourier(cv::Mat& img, std::string path);
 
-void binarization(cv::Mat& img, std::string path, int first);
-
-void filterMedian(cv::Mat& img, std::string path);
-
-void erosion(cv::Mat& img, std::string path);
-
-//void filterGaussian(cv::Mat& img, std::string path);
+void binarization(cv::Mat& img, std::string path, int rows, int cols);
 
 #endif // !IMAGEPROCESSING_H_
