@@ -236,6 +236,7 @@ void erosion(cv::Mat& img, std::string path) {
 	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1),
 		cv::Point(erosion_size, erosion_size));
 	cv::dilate(img, img, kernel);
+	threshold(img, img, 0, 255, cv::THRESH_OTSU);
 	/*
 	imshow("erosion", img);
 	cv::waitKey();
@@ -247,7 +248,6 @@ void erosion(cv::Mat& img, std::string path) {
 /*
 void filterGaussian(cv::Mat& img, std::string path) {
 	GaussianBlur(img, img, cv::Size(3, 3), 0);
-
 	imshow("GaussianBlur", img);
 	imwrite(path + "/GaussianBlur.jpg", img);
 	cv::waitKey();
@@ -256,7 +256,7 @@ void filterGaussian(cv::Mat& img, std::string path) {
 */
 
 void skeleton(cv::Mat& img, std::string path) {
-	
+
 	cv::Mat skel(img.size(), CV_8UC1, cv::Scalar(0));
 	cv::Mat temp(img.size(), CV_8UC1);
 	cv::Mat element = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
@@ -275,11 +275,11 @@ void skeleton(cv::Mat& img, std::string path) {
 	} while (!done);
 	//imshow("skeltone", skel);
 
-	imwrite(path + "/skeleton.jpg", skel); 
+	imwrite(path + "/skeleton.jpg", skel);
 
 	//Dilatation du skeleton
-	
-	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3,3));
+
+	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
 	cv::dilate(skel, skel, kernel);
 	//imshow("dilatation", skel);
 
@@ -290,6 +290,6 @@ void skeleton(cv::Mat& img, std::string path) {
 
 	imwrite(path + "/skelt_dilatation.jpg", skel);
 
-	
-	
+
+
 }
