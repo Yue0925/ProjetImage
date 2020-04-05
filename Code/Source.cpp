@@ -13,11 +13,16 @@
 
 int main()
 {
-	
+
 	// for escalier_1 to escalier_12
+	float accSensibilite = 0;
+	float accSpecificite = 0;
+	float accAccuracy = 0;
+	float accFscore = 0;
+
 	for (int i = 1; i < 13; i++)
 	{
-		
+
 		std::string path = "./images/escalier_" + std::to_string(i);
 		std::string name = "/escalier_" + std::to_string(i) + ".jpg";
 		cv::Mat img;
@@ -37,18 +42,14 @@ int main()
 
 		resize(img, img, cv::Size(cols, rows));
 
-
-
 		//REDUCTION DU BRUIT
 
-		//erosion(img, path);
-		filterMedian(img, path);
 		erosion(img, path);
+		filterMedian(img, path);
+		//erosion(img, path);
 		skeleton(img, path);
-		
-		
-		
-		
+
+
 		std::string pred = "./images/escalier_" + std::to_string(i) + "/skelt_dilatation.jpg";
 
 		std::cout << "ok" << std::endl;
@@ -63,7 +64,7 @@ int main()
 		cv::Mat ground_t = cv::imread(verite);
 
 
-		std::vector<float> matrice = secondMethode(prediction, ground_t);
+		std::vector<int> matrice = secondMethode(prediction, ground_t);
 
 		displayMatriceConf(matrice);
 
@@ -88,6 +89,11 @@ int main()
 			fichier << " Accuracy	=	" << resultats[3] << "	( pourcentage " << resultats[3] * 100 << " )" << std::endl;
 			fichier << " F-score	=	" << resultats[2] << "	( pourcentage " << resultats[2] * 100 << " )" << std::endl;
 
+			accSensibilite += resultats[0] * 100;
+			accSpecificite += resultats[1] * 100;
+			accAccuracy += resultats[3] * 100;
+			accFscore += resultats[2] * 100;
+
 			fichier.close();
 		}
 		else {
@@ -97,8 +103,12 @@ int main()
 
 	}
 
+	std::cout << "Sensibilite mean = " << (accSensibilite / 12) << std::endl;
+	std::cout << "Specificite mean = " << (accSpecificite / 12) << std::endl;
+	std::cout << "Accuracy mean = " << (accAccuracy / 12) << std::endl;
+	std::cout << "F-score mean = " << (accFscore / 12) << std::endl;
+
 
 	cv::waitKey();
 	return 0;
 }
-
