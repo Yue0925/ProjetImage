@@ -44,33 +44,36 @@ int main()
 
 		//REDUCTION DU BRUIT
 
-		erosion(img, path);
-		filterMedian(img, path);
 		//erosion(img, path);
-		skeleton(img, path);
+		//filterMedian(img, path);
+		//erosion(img, path);
+		//skeleton(img, path);
 
 
-		std::string pred = "./images/escalier_" + std::to_string(i) + "/skelt_dilatation.jpg";
+		std::string pred = "/filterMedian.jpg";
 
 		std::cout << "ok" << std::endl;
-		int nbmarche = nombreDeMarche(pred);
+
+		int nbmarche = nombreDeMarche2(path, pred);
 
 		std::cout << "Le nombre de marche de l'escalier est de : " << nbmarche << std::endl;
 
-		cv::Mat prediction = cv::imread(pred);
+		std::string proj = "./images/escalier_" + std::to_string(i) + "/Projection_Median.jpg";
+
+		cv::Mat projection = cv::imread(proj);
 
 		std::string verite = "./images/escalier_" + std::to_string(i) + "/verite.jpg";
 
 		cv::Mat ground_t = cv::imread(verite);
 
 
-		std::vector<int> matrice = secondMethode(prediction, ground_t);
+		std::vector<int> matrice = secondMethode(projection, ground_t);
 
 		displayMatriceConf(matrice);
 
 		std::vector<float> resultats = displayScore(matrice);
 
-		std::ofstream fichier("./images/escalier_" + std::to_string(i) + "/Resultat.txt", std::ios::out | std::ios::trunc);
+		std::ofstream fichier("./images/escalier_" + std::to_string(i) + "/Resultat_Projection_Median.txt", std::ios::out | std::ios::trunc);
 
 		if (fichier)
 		{

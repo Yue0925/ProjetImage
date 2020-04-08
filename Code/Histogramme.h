@@ -10,9 +10,9 @@
 
 
 float mostFrequent(float arr[], int n);
-
-int nombreDeMarche(std::string pathimage);
-
+int nombreDeMarche1(std::string pathimage, std::string image);
+int nombreDeMarche2(std::string pathimage, std::string image);
+int min(std::vector<int> vect);
 
 
 #endif // !HISTOGRAMME_H_
