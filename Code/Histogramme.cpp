@@ -57,6 +57,18 @@ int min(vector<int> vect) {
     //cout << "min est"<<min << std::endl;
     return min;
 }
+int max(vector<int> vect) {
+    int max;
+    if (vect.size() == 1) { max = vect[0]; }
+    else {
+        max = vect[0];
+        for (int i = 1; i < vect.size(); i++) {
+            if (max < vect[i]) max = vect[i];
+        }
+    }
+    //cout << "min est"<<min << std::endl;
+    return max;
+}
 int nombreDeMarche1 (std::string pathimage, std::string image){
     Mat img = imread(pathimage + image);
     //namedWindow("Prediction", cv::WINDOW_NORMAL);
@@ -65,6 +77,7 @@ int nombreDeMarche1 (std::string pathimage, std::string image){
 
     float histogramme[2048];
     /**********************************Creation de l'histogramme*******************************/
+
     for (int i = 0; i < size_i; i++) {
         float acc = 0;
         for (int j = 0; j < img.cols; j++) {
@@ -154,6 +167,7 @@ int nombreDeMarche2(std::string pathimage, std::string image) {
     float input[2048];
     copy(histo_normalized + 1, histo_normalized + size_i, input);
     seuil = mostFrequent(input, size_i);
+    //cout << "seuil est" << seuil << endl;
 
     /*****************************Definir nombre de ligne***********************************/
     int ecartmin = 0;
@@ -161,7 +175,7 @@ int nombreDeMarche2(std::string pathimage, std::string image) {
     //vecteur des epaisseur des lignes pour l'écart minimal 
     vector <int>epaisseline;
     Mat bin(img.rows, img.cols, CV_8UC1);
-    vector <int>lines;
+    vector <float>lines;
     for (int i = size_i - 1; i >= 0; i--) {
         
         if (histo_normalized[i] >= seuil) {
@@ -193,10 +207,12 @@ int nombreDeMarche2(std::string pathimage, std::string image) {
             }
         }
     }
-    for (int i = 0; i < lines.size(); i++) {
-        //cout << "lignes est :" << lines[i] << endl;
-    }
 
+    /*
+    for (int i = 0; i < lines.size(); i++) {
+        cout << "lignes est :" << lines[i] << endl;
+    }
+    */
     /***************ecart max/ecart min : retirer les lignes aberantes************************************/
     // soit trop écartée ou trop proches
     int ecartmax = 0;
@@ -216,35 +232,41 @@ int nombreDeMarche2(std::string pathimage, std::string image) {
     else {
         //ecart min est le minimum des epaisseur des lignes * une constante
         ecartmin = min(epaisseline);
+        //ecart max est le maximum des ecart entre les 4 premiere ligne
 
-        //ecart max est le maximum des ecart entre les trois premiere ligne
-
-        if ((lines[0] - lines[1]) <= (lines[1] - lines[2])) ecartmax = lines[1] - lines[2];
-        else ecartmax = lines[0] - lines[1];
+        vector<int> nv_ecartmax;
        
+        for (int i = 0; i < 3; i++) {
+            nv_ecartmax.push_back(lines[i] - lines[i+1]);
+        }
+        ecartmax = max(nv_ecartmax);
+        
+        //cout << "ecartmax est" << ecartmax << endl;
+        //cout << "ecartmin est" << ecartmin << endl;
+
 
         int taille_lines = lines.size();
         vector<int> kept_lines;
         kept_lines.push_back(lines[0]);
         for (int i = 0; i < lines.size() - 1; i++) {
             //cout << lines[i] << endl;
-            if (lines[i] - lines[i + 1] > ecartmax) {
-                //cout << " trop grand" << endl;
-            }
-            if (lines[i] - lines[i + 1] < 2 * ecartmin) {
-                //cout << "trop petit" << endl;
-            }
-            else {
-                vector<int>::iterator it = find(kept_lines.begin(), kept_lines.end(), lines[i]);
-                if (it != kept_lines.end()) {
-                    //cout << lines[i + 1] << endl;
-                    kept_lines.push_back(lines[i + 1]);
+            if (lines[i] - lines[i + 1] <= ecartmax) {
+                if (lines[i] - lines[i + 1] > (3 * ecartmin)/2) {
+                //if (lines[i] - lines[i + 1] >= (2 * ecartmin))  {
+                    vector<int>::iterator it = find(kept_lines.begin(), kept_lines.end(), lines[i]);
+                    if (it != kept_lines.end()) {
+                        //cout << lines[i + 1] << endl;
+                        kept_lines.push_back(lines[i + 1]);
+                    }
                 }
             }
 
         }
-
-
+        /*
+        for (int i = 0; i < kept_lines.size(); i++) {
+            cout << "lignes est :" << kept_lines[i] << endl;
+        }
+        */
         
 
         /******************************Nombre de marche*****************************************/

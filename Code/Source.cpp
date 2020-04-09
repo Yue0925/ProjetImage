@@ -104,12 +104,27 @@ int main()
 		}
 
 
-	}
 
-	std::cout << "Sensibilite mean = " << (accSensibilite / 12) << std::endl;
-	std::cout << "Specificite mean = " << (accSpecificite / 12) << std::endl;
-	std::cout << "Accuracy mean = " << (accAccuracy / 12) << std::endl;
-	std::cout << "F-score mean = " << (accFscore / 12) << std::endl;
+
+		std::ofstream fichier_final("./images/Resultat_Final_Projection_Median.txt", std::ios::out | std::ios::trunc);
+
+		if (fichier_final)
+		{
+			fichier_final << "Resultat :" << std::endl;
+
+			fichier_final << "Sensibilite mean = " << (accSensibilite / 12) << std::endl;
+			fichier_final << "Specificite mean = " << (accSpecificite / 12) << std::endl;
+			fichier_final << "Accuracy mean = " << (accAccuracy / 12) << std::endl;
+			fichier_final << "F-score mean = " << (accFscore / 12) << std::endl;
+
+			fichier_final.close();
+		}
+		else {
+			std::cerr << "Erreur a l'ouverture !" << std::endl;
+		}
+
+
+	}
 
 
 	cv::waitKey();
