@@ -4,7 +4,7 @@ using namespace std;
 
 
 
-float mostFrequent(float arr[], int n) {
+float seuil(float arr[], int n) {
     // Sort the array 
     std::sort(arr, arr + n);
 
@@ -12,6 +12,7 @@ float mostFrequent(float arr[], int n) {
     int max_count = 1, curr_count = 1;
     float  res = arr[0];
     int med = 0;
+    
     for (int i = 1; i < n; i++) {
         if (arr[i] == arr[i - 1])
             curr_count++;
@@ -35,6 +36,7 @@ float mostFrequent(float arr[], int n) {
         max_count = curr_count;
         res = arr[n - 1];
     }
+    
     //comparaison
     /*
     int eps = 1 / n; // à changer en fct ds resultats
@@ -98,24 +100,24 @@ int nombreDeMarche1 (std::string pathimage, std::string image){
     /***************************************Definir le seuil***********************************/
     int nbligne = 0;
     int prev = 0;
-    float seuil = 0;
+    float seuil_img = 0;
     //copy the vector 
     float input[2048];
     std::copy(histo_normalized + 1, histo_normalized + size_i, input);
-    seuil = mostFrequent(input, size_i);
+    seuil_img = seuil(input, size_i);
     //std::cout << seuil << std::endl;
     /*****************************Definir nombre de ligne***********************************/
     for (int i = size_i - 1; i >= 0; i--) {
         //std::cout << "  " << histo_normalized[i] << std::endl;
-        if ((histo_normalized[i] > seuil) && (prev == 0)) {
+        if ((histo_normalized[i] > seuil_img) && (prev == 0)) {
             nbligne++;
             prev = 1;
         }
-        if ((histo_normalized[i] == seuil) && (prev == 0)) {
+        if ((histo_normalized[i] == seuil_img) && (prev == 0)) {
             nbligne++;
             prev = 1;
         }
-        if (histo_normalized[i] < seuil) {
+        if (histo_normalized[i] < seuil_img) {
             prev = 0;
         }
     }
@@ -136,10 +138,11 @@ int nombreDeMarche2(std::string pathimage, std::string image) {
     Mat img = imread(pathimage + image);
     //namedWindow("image1", WINDOW_NORMAL);
     //imshow("image1", img);
-    const int size_i = img.rows;
-    
+    const float size_i = img.rows;
+    threshold(img, img, 127, 255,THRESH_BINARY);
 
     float histogramme[4096];
+
     /**********************************Creation de l'histogramme*******************************/
     for (int i = 0; i < size_i; i++) {
         float acc = 0;
@@ -150,6 +153,11 @@ int nombreDeMarche2(std::string pathimage, std::string image) {
         histogramme[i] = acc;
     }
 
+    /*
+    for (int i = 0; i < size_i; i++) {
+        cout << "lignes est :" <<i<<"   "<< histogramme[i] << endl;
+    }
+    */
     //Normalisation de l'histogramme
     float histo_normalized[4096];
     float tmp = 0;
@@ -162,13 +170,13 @@ int nombreDeMarche2(std::string pathimage, std::string image) {
     /***************************************Definir le seuil***********************************/
 
     int prev = 0;
-    float seuil = 0;
+    float seuil_img = 0;
     //copy the vector 
     float input[2048];
-    copy(histo_normalized + 1, histo_normalized + size_i, input);
-    seuil = mostFrequent(input, size_i);
+    int size = size_i;
+    copy(histo_normalized + 1, histo_normalized + size, input);
+    seuil_img = seuil(input, size_i);
     //cout << "seuil est" << seuil << endl;
-
     /*****************************Definir nombre de ligne***********************************/
     int ecartmin = 0;
     int epline = 0;
@@ -178,8 +186,7 @@ int nombreDeMarche2(std::string pathimage, std::string image) {
     vector <float>lines;
     for (int i = size_i - 1; i >= 0; i--) {
         
-        if (histo_normalized[i] >= seuil) {
-
+        if (histo_normalized[i] >= seuil_img) {
             if (epline != 0) {
                 epaisseline.push_back(epline);
             }
@@ -190,20 +197,37 @@ int nombreDeMarche2(std::string pathimage, std::string image) {
             epline = 0;
         }
 
-        if ((histo_normalized[i] < seuil) && (prev == 0)) {
+        if ((histo_normalized[i] < seuil_img) && (prev == 0)) {
             prev = 1;
             //cout << "nouvelle ligne" << endl;
             lines.push_back(i);
             epline++;
-            for (int j = 0; j < img.cols; j++) {
-                bin.at<char>(i, j) = 0;
+            if (i == size_i-1) { 
+                lines.pop_back();
+                for (int j = 0; j < img.cols; j++) {
+                    bin.at<char>(i, j) = 255;
+                }
+                prev = 2;
+            }
+            else {
+                for (int j = 0; j < img.cols; j++) {
+                    bin.at<char>(i, j) = 0;
+                }
             }
         }
 
-        if ((histo_normalized[i] < seuil) && (prev == 1)) {
-            epline++;
-            for (int j = 0; j < img.cols; j++) {
-                bin.at<char>(i, j) = 0;
+        if ((histo_normalized[i] < seuil_img) && ((prev == 1) || (prev == 2)) ){
+            
+            if ((i == size_i) || (prev == 2)) {
+                for (int j = 0; j < img.cols; j++) {
+                    bin.at<char>(i, j) = 255;
+                }
+            }
+            else {
+                epline++;
+                for (int j = 0; j < img.cols; j++) {
+                    bin.at<char>(i, j) = 0;
+                }
             }
         }
     }
@@ -225,7 +249,7 @@ int nombreDeMarche2(std::string pathimage, std::string image) {
                 Eval.at<char>(i, j) = 0;
             }
         }
-        namedWindow("image", WINDOW_NORMAL);
+        //namedWindow("image", WINDOW_NORMAL);
         //imshow("image", Eval);
         imwrite(pathimage + "/Projection_Median.jpg", Eval);
     }
@@ -324,7 +348,7 @@ int nombreDeMarche2(std::string pathimage, std::string image) {
             }
         }
        
-        namedWindow("image", WINDOW_NORMAL);
+        //namedWindow("image", WINDOW_NORMAL);
         //imshow("image", Eval);
         imwrite(pathimage + "/Projection_Median.jpg", Eval);
     }
