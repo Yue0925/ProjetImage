@@ -220,15 +220,14 @@ void filterMedian(cv::Mat& img, std::string path) {
 	{
 		cv::medianBlur(img, img, 3);
 		threshold(img, img, 0, 255, cv::THRESH_OTSU);
-		/*
-		imshow("filterMedian", img);
-		cv::waitKey();
-		cv::destroyWindow("filterMedian");
-		*/
-		imwrite(path + "/filterMedian.jpg", img);
 
 	}
-
+	/*
+	imshow("filterMedian", img);
+	cv::waitKey();
+	cv::destroyWindow("filterMedian");
+*/
+	imwrite(path + "/filterMedian.jpg", img);
 }
 
 void erosion(cv::Mat& img, std::string path) {
@@ -245,18 +244,8 @@ void erosion(cv::Mat& img, std::string path) {
 	imwrite(path + "/erosion.jpg", img);
 
 }
-/*
-void filterGaussian(cv::Mat& img, std::string path) {
-	GaussianBlur(img, img, cv::Size(3, 3), 0);
-	imshow("GaussianBlur", img);
-	imwrite(path + "/GaussianBlur.jpg", img);
-	cv::waitKey();
-	cv::destroyWindow("GaussianBlur");
-}
-*/
 
 void skeleton(cv::Mat& img, std::string path) {
-
 	cv::Mat skel(img.size(), CV_8UC1, cv::Scalar(0));
 	cv::Mat temp(img.size(), CV_8UC1);
 	cv::Mat element = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
@@ -284,12 +273,10 @@ void skeleton(cv::Mat& img, std::string path) {
 	//imshow("dilatation", skel);
 
 	//Binarization inverse
-
+	//threshold(skel, skel, 0, 255, cv::THRESH_OTSU | cv::THRESH_BINARY_INV);
 	threshold(skel, skel, 127, 255, cv::THRESH_BINARY_INV);
 	//imshow("binaire", skel);
 
 	imwrite(path + "/skelt_dilatation.jpg", skel);
-
-
-
+	img = skel.clone();
 }

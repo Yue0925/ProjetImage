@@ -10,8 +10,8 @@
 
 
 float seuil(float arr[], int n);
-int nombreDeMarche1(std::string pathimage, std::string image);
-int nombreDeMarche2(std::string pathimage, std::string image);
+int nombreDeMarche1(std::string path, const cv::Mat& img);
+int nombreDeMarche2(std::string path, const cv::Mat& img);
 int min(std::vector<int> vect);
 int max(std::vector<int> vect);
 
