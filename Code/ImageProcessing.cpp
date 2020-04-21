@@ -153,12 +153,15 @@ void lectureImage(cv::Mat& img, std::string path, std::string name, int& rows, i
 	resize(img, img, cv::Size(512, 512));
 
 	// apply a GaussianBlur to color image to reduce the noise
-	GaussianBlur(img, img, cv::Size(3, 3), 0, 0, cv::BORDER_DEFAULT);
+	//GaussianBlur(img, img, cv::Size(3, 3), 0, 0, cv::BORDER_DEFAULT);
 	/*
 	imshow("color img", img);
 	cv::waitKey();
 	cv::destroyWindow("color img");
 	*/
+}
+void lectureImage(cv::Mat& img, std::string path, std::string name) {
+	img = cv::imread(path + name, cv::IMREAD_GRAYSCALE);
 }
 
 void greyscaleImage(cv::Mat& img, std::string path) {
@@ -229,7 +232,6 @@ void filterMedian(cv::Mat& img, std::string path) {
 */
 	imwrite(path + "/filterMedian.jpg", img);
 }
-
 void erosion(cv::Mat& img, std::string path) {
 	int erosion_size = 1;
 	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1),
@@ -244,6 +246,16 @@ void erosion(cv::Mat& img, std::string path) {
 	imwrite(path + "/erosion.jpg", img);
 
 }
+/*
+void filterGaussian(cv::Mat& img, std::string path) {
+	GaussianBlur(img, img, cv::Size(3, 3), 0);
+
+	imshow("GaussianBlur", img);
+	imwrite(path + "/GaussianBlur.jpg", img);
+	cv::waitKey();
+	cv::destroyWindow("GaussianBlur");
+}
+*/
 
 void skeleton(cv::Mat& img, std::string path) {
 	cv::Mat skel(img.size(), CV_8UC1, cv::Scalar(0));

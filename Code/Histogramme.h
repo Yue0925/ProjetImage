@@ -6,10 +6,10 @@
 #include "opencv2/imgproc.hpp"
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 
 
-float seuil(float arr[], int n);
 int nombreDeMarche1(std::string path, const cv::Mat& img);
 int nombreDeMarche2(std::string path, const cv::Mat& img);
 int min(std::vector<int> vect);
