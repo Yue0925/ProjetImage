@@ -367,7 +367,7 @@ int nombreDeMarche2(std::string path, const cv::Mat& img) {
 
     int ecartmin = 0;  //ecart min est le minimum des epaisseur des lignes * une constante
     int ecartmax = 0;  //ecart max est le maximum des ecart entre les 4 premiere ligne
-
+    int nbmarche = 0;
     ecartmin = min(epaisseline);
     //ecartmin = 5;
     vector<int> nv_ecartmax;
@@ -378,153 +378,165 @@ int nombreDeMarche2(std::string path, const cv::Mat& img) {
     }
 
     //S'assurer que le nombre de lignes est egales au nombre de d'epaisseur de lignes
-    if (lines.size() == epaisseline.size()) cout << "nickel !" << endl;
-    else {
-        cout << "Mon dieu !" << endl;
-        // cout <<"nb line "<< lines.size() << "  nb epaisse" << epaisseline.size() << endl;
-    }
+    if (lines.size() == epaisseline.size()) {
 
-
-
-    /*
-    for (int i = 0; i < lines.size(); i++) {
-        cout << "lignes est :" << lines[i] << endl;
-    }
-    */
-
-
-    for (int i = 0; i < 3; i++) {
-        nv_ecartmax.push_back((lines[i] - epaisseline[i]) - (lines[i + 1]));
-    }
-    ecartmax = max(nv_ecartmax);
-
-    cout << "ecartmax est" << ecartmax << endl;
-    cout << "ecartmin est" << ecartmin << endl;
-
-    vector<int> kept_lines;
-    kept_lines.push_back(lines[0]);
-
-    for (int i = 0; i < lines.size() - 1; i++) {
-        int ecart = (lines[i] - epaisseline[i]) - (lines[i + 1]);
-        //cout << " " << ecart << endl;
-        if (ecart <= ecartmax) {
-            if (ecartmax < (3 * ecartmin) / 2) {
-                if ((ecart >= ecartmin) || (ecart < 5)) {
-                    if (count(kept_lines.begin(), kept_lines.end(), lines[i])) {
-                        kept_lines.push_back(lines[i + 1]);
-                        //cout << " " << ecart << endl;
-                    }
-
-                }
-
-            }
-            else {
-                if ((ecart >= (3 * ecartmin) / 2) || (ecart < 5)) {
-                    if (count(kept_lines.begin(), kept_lines.end(), lines[i])) {
-                        kept_lines.push_back(lines[i + 1]);
-                        //cout << " " << ecart << endl;
-                    }
-
-                }
-
-            }
-
+        /*
+        for (int i = 0; i < lines.size(); i++) {
+            cout << "lignes est :" << lines[i] << endl;
         }
-    }
+        */
 
 
-    /*
-    for (int i = 0; i < kept_lines.size(); i++) {
-        cout << "lignes est :" << kept_lines[i] << endl;
-    }
-    */
+        for (int i = 0; i < 3; i++) {
+            nv_ecartmax.push_back((lines[i] - epaisseline[i]) - (lines[i + 1]));
+        }
+        ecartmax = max(nv_ecartmax);
 
+        cout << "ecartmax est" << ecartmax << endl;
+        cout << "ecartmin est" << ecartmin << endl;
 
-    //vecteur pour l'evaluation 1 pour la ligne marqué et 0 sinon 
-    prev = 0;
-    for (int i = size_rows - 1; i >= 0; i--) {
-        if (detetcted_lines[i] == 2) {
-            if (count(kept_lines.begin(), kept_lines.end(), i)) {
-                prev = 1;
-                //cout << "hey" << endl;
-                detetcted_lines[i] == 1;
+        vector<int> kept_lines;
+        kept_lines.push_back(lines[0]);
+
+        for (int i = 0; i < lines.size() - 1; i++) {
+            int ecart = (lines[i] - epaisseline[i]) - (lines[i + 1]);
+            //cout << " " << ecart << endl;
+            if (ecart <= ecartmax) {
+                if (ecartmax < (3 * ecartmin) / 2) {
+                    if ((ecart >= ecartmin) || (ecart < 5)) {
+                        if (count(kept_lines.begin(), kept_lines.end(), lines[i])) {
+                            kept_lines.push_back(lines[i + 1]);
+                            //cout << " " << ecart << endl;
+                        }
+
+                    }
+
+                }
+                else {
+                    if ((ecart >= (3 * ecartmin) / 2) || (ecart < 5)) {
+                        if (count(kept_lines.begin(), kept_lines.end(), lines[i])) {
+                            kept_lines.push_back(lines[i + 1]);
+                            //cout << " " << ecart << endl;
+                        }
+
+                    }
+
+                }
+
             }
-            else {
-                prev = 0;
+        }
+
+
+        /*
+        for (int i = 0; i < kept_lines.size(); i++) {
+            cout << "lignes est :" << kept_lines[i] << endl;
+        }
+        */
+
+
+        //vecteur pour l'evaluation 1 pour la ligne marqué et 0 sinon 
+        prev = 0;
+        for (int i = size_rows - 1; i >= 0; i--) {
+            if (detetcted_lines[i] == 2) {
+                if (count(kept_lines.begin(), kept_lines.end(), i)) {
+                    prev = 1;
+                    //cout << "hey" << endl;
+                    detetcted_lines[i] == 1;
+                }
+                else {
+                    prev = 0;
+                    detetcted_lines[i] = 0;
+                }
+
+            }
+            if (detetcted_lines[i] == 1) {
+                if (prev == 0) detetcted_lines[i] = 0;
+            }
+        }
+        /*
+        for (int i = 0; i < detetcted_lines.size(); i++) {
+            cout << "lignes est :" << detetcted_lines[i] << endl;
+        }
+        */
+        //enlevr la premiere ligne qui est du au  bruit
+        int nbligne = kept_lines.size();
+        if (kept_lines[0] == size_rows - 1) {
+            for (int i = 0; i < epaisseline[0]; i++) {
+                detetcted_lines[(size_rows - 1) - i] = 0;
+                //cout << "lignes est :" << detetcted_lines[(size_rows-1) - i] <<" "<<i << endl;
+            }
+            nbligne--;
+        }
+
+        cout << "ici"<<endl;
+        //enlevr la derniere ligne qui est du au  bruit
+        int nb_lines = epaisseline.size();
+        if (detetcted_lines[0] > 0) {
+            cout << "ici" << endl;
+            int i = 0;
+            do {
+                //cout << "lignes est :" << detetcted_lines[i] << " " << i << endl;
                 detetcted_lines[i] = 0;
+                i++;
+                
+            } while (detetcted_lines[i] > 0);
+            nbligne--;
+        }
+
+        Mat apres_Nettoyage(img.rows, img.cols, CV_8UC1);
+        //visualiser les résultats
+        for (int i = 0; i < size_rows; i++) {
+
+            if (detetcted_lines[i] > 0) {
+                for (int j = 0; j < size_cols; j++) {
+                    apres_Nettoyage.at<char>(i, j) = 0;
+                }
             }
-
-        }
-        if (detetcted_lines[i] == 1) {
-            if (prev == 0) detetcted_lines[i] = 0;
-        }
-    }
-    /*
-    for (int i = 0; i < detetcted_lines.size(); i++) {
-        cout << "lignes est :" << detetcted_lines[i] << endl;
-    }
-    */
-    //enlevr la premiere ligne qui est du au  bruit
-    int nbligne = kept_lines.size();
-    if (kept_lines[0] == size_rows - 1) {
-        for (int i = 0; i < epaisseline[0]; i++) {
-            detetcted_lines[(size_rows - 1) - i] = 0;
-            //cout << "lignes est :" << detetcted_lines[(size_rows-1) - i] <<" "<<i << endl;
-        }
-        nbligne--;
-    }
-
-    Mat apres_Nettoyage(img.rows, img.cols, CV_8UC1);
-    //visualiser les résultats
-    for (int i = 0; i < size_rows; i++) {
-
-        if (detetcted_lines[i] > 0) {
-            for (int j = 0; j < size_cols; j++) {
-                apres_Nettoyage.at<char>(i, j) = 0;
+            else {
+                for (int j = 0; j < size_cols; j++) {
+                    apres_Nettoyage.at<char>(i, j) = 255;
+                }
             }
+        }
+        /*
+        imshow("apres_Nettoyage", apres_Nettoyage);
+        cv::waitKey();
+        cv::destroyWindow("apres_Nettoyage");
+        */
+        cv::imwrite(path + "/Fct_2_apres_Nettoyage_FM.jpg", apres_Nettoyage);
+
+        /******************************Nombre de marche*****************************************/
+        
+        if (nbmarche % 2 == 0) {
+            nbmarche = nbligne / 2;
         }
         else {
-            for (int j = 0; j < size_cols; j++) {
-                apres_Nettoyage.at<char>(i, j) = 255;
+            nbmarche = (nbligne - 1) / 2;
+        }
+
+        /****************************The OutPut image for the evaluation************************/
+
+        Mat eval(img.size(), CV_8UC1, cv::Scalar(0));
+        eval = img.clone();
+
+
+
+        for (int i = 0; i < size_rows; i++) {
+            if (detetcted_lines[i] == 0) {
+                for (int j = 0; j < size_cols; j++) {
+                    eval.at<uchar>(i, j) = 255;
+                }
+
             }
         }
-    }
-    /*
-    imshow("apres_Nettoyage", apres_Nettoyage);
-    cv::waitKey();
-    cv::destroyWindow("apres_Nettoyage");
-    */
-    cv::imwrite(path + "/Fct_2_apres_Nettoyage_FM.jpg", apres_Nettoyage);
 
-    /******************************Nombre de marche*****************************************/
-    int nbmarche = 0;
-    if (nbmarche % 2 == 0) {
-        nbmarche = nbligne / 2;
+        //namedWindow("image", WINDOW_NORMAL);
+        //imshow("image", eval);
+        imwrite(path + "/evaluation_FM.jpg", eval);
     }
     else {
-        nbmarche = (nbligne - 1) / 2;
+    cout << "Le nombre de ligne ne concorde pas avec le nombre d'epaisseur obtenu" << endl;
     }
-
-    /****************************The OutPut image for the evaluation************************/
-    
-    Mat eval(img.size(), CV_8UC1, cv::Scalar(0));
-    eval = img.clone();
-
-
-    
-    for (int i = 0; i < size_rows; i++) {
-        if (detetcted_lines[i] == 0) {
-            for (int j = 0; j < size_cols; j++) {
-                eval.at<uchar>(i, j) = 255;
-            }
-
-        }
-    }
-    
-    //namedWindow("image", WINDOW_NORMAL);
-    //imshow("image", eval);
-    imwrite(path + "/evaluation_FM.jpg", eval);
-    
 
     return nbmarche;
 }
