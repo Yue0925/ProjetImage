@@ -44,33 +44,41 @@ int main()
 
 		//REDUCTION DU BRUIT
 
-		//erosion(img, path);
+		
 		filterMedian(img, path);
 		//erosion(img, path);
 		//skeleton(img, path);
 
-		std::cout << "ok" << std::endl;
+
+		
+
+		
 
 		int nbmarche = nombreDeMarche2(path, img);
 
 		std::cout << "Le nombre de marche de l'escalier est de : " << nbmarche << std::endl;
 
-		std::string proj = "./images/escalier_" + std::to_string(i) + "/Projection_Median.jpg";
+//			Phase d'evaluation du programme 
 
-		cv::Mat projection = cv::imread(proj);
+		cv::Mat evaluation;
+		cv::Mat groundtruth;
 
-		std::string verite = "./images/escalier_" + std::to_string(i) + "/verite.jpg";
+		std::string eval = "/evaluation_FM.jpg";
 
-		cv::Mat ground_t = cv::imread(verite);
+		std::string verite =  "/verite.jpg";
 
 
-		std::vector<int> matrice = secondMethode(projection, ground_t);
+		lectureImage(evaluation, path, eval);
+		lectureImage(groundtruth, path, verite);
+
+
+		std::vector<float> matrice = secondMethode(evaluation, groundtruth);
 
 		displayMatriceConf(matrice);
 
 		std::vector<float> resultats = displayScore(matrice);
 
-		std::ofstream fichier("./images/escalier_" + std::to_string(i) + "/Resultat_Projection_Median.txt", std::ios::out | std::ios::trunc);
+		std::ofstream fichier("./images/escalier_" + std::to_string(i) + "/Resultat_Eval_FM.txt", std::ios::out | std::ios::trunc);
 
 		if (fichier)
 		{
@@ -101,23 +109,28 @@ int main()
 		}
 
 
-	}
-	std::ofstream fichier_final("./images/Resultat_Final_Projection_Median.txt", std::ios::out | std::ios::trunc);
 
-	if (fichier_final)
-	{
-		fichier_final << "Resultat :" << std::endl;
 
-		fichier_final << "Sensibilite mean = " << (accSensibilite / 12) << std::endl;
-		fichier_final << "Specificite mean = " << (accSpecificite / 12) << std::endl;
-		fichier_final << "Accuracy mean = " << (accAccuracy / 12) << std::endl;
-		fichier_final << "F-score mean = " << (accFscore / 12) << std::endl;
+		std::ofstream fichier_final("./images/Resultat_Final_Fct_2_FM_2.txt", std::ios::out | std::ios::trunc);
 
-		fichier_final.close();
+		if (fichier_final)
+		{
+			fichier_final << "Resultat :" << std::endl;
+
+			fichier_final << "Sensibilite mean = " << (accSensibilite / 12) << std::endl;
+			fichier_final << "Specificite mean = " << (accSpecificite / 12) << std::endl;
+			fichier_final << "Accuracy mean = " << (accAccuracy / 12) << std::endl;
+			fichier_final << "F-score mean = " << (accFscore / 12) << std::endl;
+
+			fichier_final.close();
+		}
+		else {
+			std::cerr << "Erreur a l'ouverture !" << std::endl;
+		}
+		
+
 	}
-	else {
-		std::cerr << "Erreur a l'ouverture !" << std::endl;
-	}
+
 
 	cv::waitKey();
 	return 0;

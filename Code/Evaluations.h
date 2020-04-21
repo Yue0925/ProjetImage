@@ -10,10 +10,10 @@
 #include<iostream>
 #include <vector>
 
-std::vector<int> secondMethode(cv::Mat prediction, cv::Mat verite_terrain);
+std::vector<float> secondMethode(const cv::Mat& prediction, const cv::Mat& verite_terrain);
 
-void displayMatriceConf(std::vector<int> matriceConfusion);
+void displayMatriceConf(std::vector<float> matriceConfusion);
 
-std::vector<float>  displayScore(std::vector<int> matriceConfusion);
+std::vector<float>  displayScore(std::vector<float> matriceConfusion);
 
 #endif // !EVALUATIONS_H_

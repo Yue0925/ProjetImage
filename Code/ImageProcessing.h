@@ -26,6 +26,8 @@ void tfOutput(cv::Mat& Mag, cv::Mat& Phase, cv::Mat& img, std::string path);
 
 void lectureImage(cv::Mat& img, std::string path, std::string name, int& rows, int& cols);
 
+void lectureImage(cv::Mat& img, std::string path, std::string name);
+
 void greyscaleImage(cv::Mat& img, std::string path);
 
 void equlization(cv::Mat& img, std::string path);
