@@ -192,7 +192,7 @@ int nombreDeMarche1(std::string path, const cv::Mat& img) {
     return nbmarche;
 }
 
-int nombreDeMarche2(std::string path, const cv::Mat& img) {
+int nombreDeMarche2(std::string path, const cv::Mat& img,std::string name) {
 
     /*
     imshow("FM_1_binaire", img);
@@ -249,7 +249,7 @@ int nombreDeMarche2(std::string path, const cv::Mat& img) {
     cv::waitKey();
     cv::destroyWindow("Projection_avant_Seuil");
     */
-    cv::imwrite(path + "/Fct_2_avant_Seuil_FM.jpg", avantSeuil1);
+    cv::imwrite(path + "/FM_2/Fct_2_avant_Seuil_FM.jpg", avantSeuil1);
 
 
     /**************************************************************Definir le seuil********************************************************/
@@ -353,7 +353,7 @@ int nombreDeMarche2(std::string path, const cv::Mat& img) {
     cv::waitKey();
     cv::destroyWindow("apres_Seuil");
     */
-    cv::imwrite(path + "/Fct_2_apres_Seuil_FM.jpg", apresSeuil);
+    cv::imwrite(path + "/FM_2/Fct_2_apres_Seuil_FM.jpg", apresSeuil);
 
 
 
@@ -468,7 +468,7 @@ int nombreDeMarche2(std::string path, const cv::Mat& img) {
             nbligne--;
         }
 
-        cout << "ici"<<endl;
+        cout << "ici" << endl;
         //enlevr la derniere ligne qui est du au  bruit
         int nb_lines = epaisseline.size();
         if (detetcted_lines[0] > 0) {
@@ -478,7 +478,7 @@ int nombreDeMarche2(std::string path, const cv::Mat& img) {
                 //cout << "lignes est :" << detetcted_lines[i] << " " << i << endl;
                 detetcted_lines[i] = 0;
                 i++;
-                
+
             } while (detetcted_lines[i] > 0);
             nbligne--;
         }
@@ -503,10 +503,10 @@ int nombreDeMarche2(std::string path, const cv::Mat& img) {
         cv::waitKey();
         cv::destroyWindow("apres_Nettoyage");
         */
-        cv::imwrite(path + "/Fct_2_apres_Nettoyage_FM.jpg", apres_Nettoyage);
+        cv::imwrite(path + "/FM_2/Fct_2_apres_Nettoyage_FM.jpg", apres_Nettoyage);
 
         /******************************Nombre de marche*****************************************/
-        
+
         if (nbmarche % 2 == 0) {
             nbmarche = nbligne / 2;
         }
@@ -532,10 +532,26 @@ int nombreDeMarche2(std::string path, const cv::Mat& img) {
 
         //namedWindow("image", WINDOW_NORMAL);
         //imshow("image", eval);
-        imwrite(path + "/evaluation_FM.jpg", eval);
+        imwrite(path + "/FM_2/evaluation_FM.jpg", eval);
+
+        Mat couleur = cv::imread(path+name, cv::IMREAD_COLOR);
+        namedWindow("couleur", WINDOW_NORMAL);
+        imshow("couleur", couleur);
+        for (int i = 0; i < size_rows; i++) {
+            for (int j = 0; j < size_cols; j++) {
+                if (eval.at<uchar>(i, j) == 0) {
+                    couleur.at< cv::Vec3b>(i, j)[0] = 0;
+                    couleur.at< cv::Vec3b>(i, j)[1] = 0;
+                    couleur.at< cv::Vec3b>(i, j)[2] = 255;
+                }
+            }           
+        }
+        namedWindow("pred", WINDOW_NORMAL);
+        imshow("pred", couleur);
+        imwrite(path + "/final.jpg", couleur);
     }
     else {
-    cout << "Le nombre de ligne ne concorde pas avec le nombre d'epaisseur obtenu" << endl;
+        cout << "Le nombre de ligne ne concorde pas avec le nombre d'epaisseur obtenu" << endl;
     }
 
     return nbmarche;

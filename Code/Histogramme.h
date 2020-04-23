@@ -11,7 +11,7 @@
 
 
 int nombreDeMarche1(std::string path, const cv::Mat& img);
-int nombreDeMarche2(std::string path, const cv::Mat& img);
+int nombreDeMarche2(std::string path, const cv::Mat& img,std::string name);
 int min(std::vector<int> vect);
 int max(std::vector<int> vect);
 

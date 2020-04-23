@@ -54,7 +54,7 @@ int main()
 
 		
 
-		int nbmarche = nombreDeMarche2(path, img);
+		int nbmarche = nombreDeMarche2(path, img,name);
 
 		std::cout << "Le nombre de marche de l'escalier est de : " << nbmarche << std::endl;
 
@@ -63,7 +63,7 @@ int main()
 		cv::Mat evaluation;
 		cv::Mat groundtruth;
 
-		std::string eval = "/evaluation_FM.jpg";
+		std::string eval = "/FM_2/evaluation_FM.jpg";
 
 		std::string verite =  "/verite.jpg";
 
@@ -78,7 +78,7 @@ int main()
 
 		std::vector<float> resultats = displayScore(matrice);
 
-		std::ofstream fichier("./images/escalier_" + std::to_string(i) + "/Resultat_Eval_FM.txt", std::ios::out | std::ios::trunc);
+		std::ofstream fichier("./images/escalier_" + std::to_string(i) + "/FM_2/Resultat_Eval_FM.txt", std::ios::out | std::ios::trunc);
 
 		if (fichier)
 		{
@@ -111,7 +111,7 @@ int main()
 
 
 
-		std::ofstream fichier_final("./images/Resultat_Final_Fct_2_FM_2.txt", std::ios::out | std::ios::trunc);
+		std::ofstream fichier_final("./images/Res_Generaux_22_04/Resultat_Final_Fct_2_FM_3.txt", std::ios::out | std::ios::trunc);
 
 		if (fichier_final)
 		{
