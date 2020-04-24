@@ -100,7 +100,7 @@ int main()
 			accSensibilite += resultats[0] * 100;
 			accSpecificite += resultats[1] * 100;
 			accAccuracy += resultats[3] * 100;
-			accFscore += resultats[2] * 100;
+			accFscore += resultats[2];
 
 			fichier.close();
 		}
