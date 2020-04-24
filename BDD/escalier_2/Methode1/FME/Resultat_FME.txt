@@ -1,0 +1,12 @@
+Resultat :
+Le nombre de marche de l'escalier est de : 4
+MATRICE DE CONFUSION 
+ Vrai Positif	=	347
+ Faux Positif	=	7148
+ Vrai Negatif	=	44673
+ Faux Negatif	=	6444
+Sensibilite - Specificite - FSCORE 
+ Sensibilite	=	0.051097	( pourcentage 5.1097 )
+ Specificite		=	0.0462975	( pourcentage 4.62975 )
+ Accuracy	=	0.768102	( pourcentage 76.8102 )
+ F-score	=	0.048579	( pourcentage 4.8579 )
